@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>One Piece Mystery Sheet</title>
+    <style>
+        :root {
+            --bg-overlay: rgba(15, 15, 22, 0.88);
+            --panel-bg: rgba(30, 30, 42, 0.95);
+            --accent: #d4af37;
+            --text: #f0f0f0;
+            --border: #444455;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            
+            background-image: 
+                linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
+                url('https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        h1 {
+            color: var(--accent);
+            margin: 5px 0 10px 0;
+            text-align: center;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        /* STICKY PLAYER SELECTOR FOR MOBILE */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(20, 20, 28, 0.98);
+            width: 100%;
+            max-width: 600px;
+            padding: 10px 5px;
+            border-bottom: 2px solid var(--accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .player-tabs {
+            display: flex;
+            overflow-x: auto;
+            gap: 6px;
+            padding-bottom: 4px;
+            scrollbar-width: none; /* Hide scrollbar Firefox */
+        }
+
+        .player-tabs::-webkit-scrollbar {
+            display: none; /* Hide scrollbar Chrome/Safari */
+        }
+
+        .tab-btn {
+            background: #282836;
+            color: #aaa;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            white-space: nowrap;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #111;
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+        }
+
+        .controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .controls button {
+            flex: 1;
+            background-color: var(--panel-bg);
+            color: var(--text);
+            border: 1px solid var(--accent);
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .sheet-container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .category-card {
+            background: var(--panel-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .category-title {
+            background-color: rgba(20, 20, 28, 0.95);
+            color: var(--accent);
+            font-size: 1.1rem;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-size: 1rem;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
+        .mark-btn {
+            background: #22222e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .symbol-tick { color: #4eff7b; text-shadow: 0 0 5px rgba(78,255,123,0.4); }
+        .symbol-cross { color: #ff5252; text-shadow: 0 0 5px rgba(255,82,82,0.4); }
+        .symbol-question { color: #ffca28; text-shadow: 0 0 5px rgba(255,202,40,0.4); }
+    </style>
+</head>
+<body>
+
+    <h1>🏴‍☠️ One Piece Companion</h1>
+
+    <!-- Sticky Header to Switch Active Player View -->
+    <div class="sticky-header">
+        <div style="font-size: 0.75rem; color: #888; margin-bottom: 5px; text-align: center;">SELECT PLAYER SHEET:</div>
+        <div class="player-tabs" id="playerTabs">
+            <!-- Tabs generated by JS -->
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="clearMarks()">Clear Current Sheet</button>
+        <button onclick="resetToDefault()">Reset Game</button>
+    </div>
+
+    <!-- Active Player Detective Sheet -->
+    <div class="sheet-container" id="sheetContainer">
+        <!-- Content dynamic rendering -->
+    </div>
+
+    <script>
+        const characters = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Robin", "Franky", "Chopper", "Brook"];
+        const places = ["Land of Wano", "Fish-Man Island", "Dressrosa", "Punk Hazard", "Drum Kingdom", "Marineford", "Whole Cake Island", "Amazon Lily", "Water Seven"];
+        const treasures = ["Treasure Chest", "Binoculars", "Necklace", "Pirate Coins", "Meat", "Sword"];
+
+        const players = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Robin"];
+
+        const states = [
+            { symbol: "", class: "" },
+            { symbol: "✔", class: "symbol-tick" },
+            { symbol: "❌", class: "symbol-cross" },
+            { symbol: "❓", class: "symbol-question" }
+        ];
+
+        let selectedPlayerIndex = 0;
+        let gameMarks = {}; // format: "playerIdx-categoryKey-itemIdx": stateIdx
+
+        function init() {
+            loadSavedData();
+            renderTabs();
+            renderSheet();
+        }
+
+        function renderTabs() {
+            const tabsContainer = document.getElementById("playerTabs");
+            tabsContainer.innerHTML = "";
+
+            players.forEach((player, index) => {
+                const btn = document.createElement("button");
+                btn.className = `tab-btn ${index === selectedPlayerIndex ? 'active' : ''}`;
+                btn.textContent = player;
+                btn.onclick = () => {
+                    selectedPlayerIndex = index;
+                    renderTabs();
+                    renderSheet();
+                };
+                tabsContainer.appendChild(btn);
+            });
+        }
+
+        function renderSheet() {
+            const container = document.getElementById("sheetContainer");
+            container.innerHTML = "";
+
+            renderCategory(container, "Characters", characters, "characters");
+            renderCategory(container, "Locations", places, "places");
+            renderCategory(container, "Treasures", treasures, "treasures");
+        }
+
+        function renderCategory(container, title, items, categoryKey) {
+            const card = document.createElement("div");
+            card.className = "category-card";
+
+            let html = `<div class="category-title">${title}</div>`;
+            
+            items.forEach((item, itemIdx) => {
+                const key = `${selectedPlayerIndex}-${categoryKey}-${itemIdx}`;
+                const currentStateIdx = gameMarks[key] || 0;
+                const state = states[currentStateIdx];
+
+                html += `
+                    <div class="item-row">
+                        <span class="item-name">${item}</span>
+                        <div class="mark-btn ${state.class}" onclick="toggleMark('${key}')">
+                            ${state.symbol}
+                        </div>
+                    </div>
+                `;
+            });
+
+            card.innerHTML = html;
+            container.appendChild(card);
+        }
+
+        function toggleMark(key) {
+            let currentState = gameMarks[key] || 0;
+            let nextState = (currentState + 1) % states.length;
+            gameMarks[key] = nextState;
+            saveData();
+            renderSheet();
+        }
+
+        function clearMarks() {
+            if (confirm(`Clear all marks for ${players[selectedPlayerIndex]}?`)) {
+                Object.keys(gameMarks).forEach(key => {
+                    if (key.startsWith(`${selectedPlayerIndex}-`)) {
+                        delete gameMarks[key];
+                    }
+                });
+                saveData();
+                renderSheet();
+            }
+        }
+
+        function resetToDefault() {
+            if (confirm("Reset marks for ALL players?")) {
+                localStorage.removeItem("op_companion_marks");
+                gameMarks = {};
+                renderSheet();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem("op_companion_marks", JSON.stringify(gameMarks));
+        }
+
+        function loadSavedData() {
+            const saved = localStorage.getItem("op_companion_marks");
+            if (saved) {
+                try { gameMarks = JSON.parse(saved); } catch(e){}
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
