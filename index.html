@@ -62,18 +62,20 @@
 
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
             max-width: 800px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
 
         .controls button {
             flex: 1;
+            min-width: 110px;
             background: var(--header-bg);
             color: var(--accent);
             border: 1px solid var(--accent);
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
@@ -86,16 +88,43 @@
             color: #000;
         }
 
-        /* MATRIX TABLE STYLES (MATCHING CLUEDO GOT) */
-        .table-wrapper {
+        /* SEPARATE TABLE WRAPPERS */
+        .table-card {
             width: 100%;
             max-width: 800px;
-            overflow-x: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             background: var(--panel-bg);
             border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
             margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .category-header-banner {
+            background-color: #111118;
+            color: #fff;
+            padding: 10px 12px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid var(--accent);
+            cursor: pointer;
+            background: #222;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
         }
 
         table {
@@ -114,18 +143,8 @@
         th {
             background-color: var(--header-bg);
             color: var(--accent);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        th.category-row {
-            background-color: #111118;
-            color: #fff;
-            text-align: left;
-            padding-left: 10px;
-            font-size: 0.95rem;
-            letter-spacing: 0.5px;
+            font-weight: bold;
+            font-size: 0.85rem;
         }
 
         .item-cell {
@@ -134,17 +153,6 @@
             font-weight: 500;
             min-width: 130px;
             background-color: rgba(25, 25, 35, 0.7);
-        }
-
-        .player-header input {
-            background: transparent;
-            border: none;
-            color: var(--accent);
-            font-weight: bold;
-            font-size: 0.85rem;
-            text-align: center;
-            width: 100%;
-            font-family: inherit;
         }
 
         .mark-cell {
@@ -164,6 +172,76 @@
         .symbol-cross { color: #ff5252; font-weight: bold; }
         .symbol-tick { color: #4eff7b; font-weight: bold; }
         .symbol-question { color: #ffca28; font-weight: bold; }
+
+        /* MODAL DIALOG FOR PLAYER NAMES SETTINGS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .modal-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        .modal-card h2 {
+            margin-top: 0;
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .player-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .player-input-group label {
+            width: 30px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .player-input-group input {
+            flex: 1;
+            padding: 8px;
+            background: #111118;
+            border: 1px solid var(--border);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-save { background: var(--accent); color: #000; }
+        .btn-cancel { background: #444; color: #fff; }
 
         /* QR CODE PANEL */
         .qr-card {
@@ -201,39 +279,46 @@
     </header>
 
     <div class="controls">
+        <button onclick="openPlayerModal()">⚙️ Player Names</button>
         <button onclick="clearMarks()">Clear Sheet</button>
-        <button onclick="resetAll()">Reset Names & Marks</button>
+        <button onclick="resetAll()">Reset All</button>
     </div>
 
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th style="min-width: 130px;">Clues</th>
-                    <th class="player-header"><input type="text" id="p0" value="Luffy" onchange="savePlayers()"></th>
-                    <th class="player-header"><input type="text" id="p1" value="Zoro" onchange="savePlayers()"></th>
-                    <th class="player-header"><input type="text" id="p2" value="Sanji" onchange="savePlayers()"></th>
-                    <th class="player-header"><input type="text" id="p3" value="Nami" onchange="savePlayers()"></th>
-                    <th class="player-header"><input type="text" id="p4" value="Usopp" onchange="savePlayers()"></th>
-                    <th class="player-header"><input type="text" id="p5" value="Robin" onchange="savePlayers()"></th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-            </tbody>
-        </table>
-    </div>
+    <!-- 3 SEPARATE TABLES -->
+    <div id="tablesContainer" style="width: 100%; max-width: 800px;"></div>
 
     <div class="qr-card">
         <h3>📱 Scan to Open Sheet on Your Phone</h3>
         <div id="qrcode"></div>
     </div>
 
+    <!-- PLAYER NAMES MODAL DIALOG -->
+    <div class="modal-overlay" id="playerModal">
+        <div class="modal-card">
+            <h2>⚙️ Edit Player Names</h2>
+            <div id="modalInputs"></div>
+            <div class="modal-actions">
+                <button class="btn-save" onclick="savePlayerModal()">Save</button>
+                <button class="btn-cancel" onclick="closePlayerModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden File Input for Image Uploads -->
+    <input type="file" id="imageUploader" accept="image/*" style="display: none;">
+
     <script>
         const characters = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Robin", "Franky", "Chopper", "Brook"];
         const places = ["Land of Wano", "Fish-Man Island", "Dressrosa", "Punk Hazard", "Drum Kingdom", "Marineford", "Whole Cake Island", "Amazon Lily", "Water Seven"];
         const treasures = ["Treasure Chest", "Binoculars", "Necklace", "Pirate Coins", "Meat", "Sword"];
 
-        const defaultPlayers = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Robin"];
+        const defaultPlayers = ["P1", "P2", "P3", "P4", "P5", "P6"];
+
+        const defaultIcons = {
+            char: "https://api.iconify.design/ion:person.svg?color=%23e5b842",
+            loc: "https://api.iconify.design/ion:location.svg?color=%23e5b842",
+            treasure: "https://api.iconify.design/ion:ribbon.svg?color=%23e5b842"
+        };
 
         const states = [
             { symbol: "", class: "" },
@@ -242,12 +327,16 @@
             { symbol: "❓", class: "symbol-question" }
         ];
 
-        let gameMarks = {}; // Stores matrix keys "catKey-itemIdx-pIdx": stateIdx
+        let players = [...defaultPlayers];
+        let gameMarks = {}; 
+        let categoryIcons = { ...defaultIcons };
+        let activeCategoryForImage = null;
 
         function init() {
             loadSavedData();
-            renderTable();
+            renderTables();
             generateQRCode();
+            setupImageUploader();
         }
 
         function generateQRCode() {
@@ -258,110 +347,182 @@
             });
         }
 
-        function renderTable() {
-            const tbody = document.getElementById("tableBody");
-            tbody.innerHTML = "";
+        function renderTables() {
+            const container = document.getElementById("tablesContainer");
+            container.innerHTML = "";
 
-            renderSection(tbody, "Characters", characters, "char");
-            renderSection(tbody, "Locations", places, "loc");
-            renderSection(tbody, "Treasures", treasures, "treasure");
+            renderSingleTable(container, "Characters", characters, "char");
+            renderSingleTable(container, "Locations", places, "loc");
+            renderSingleTable(container, "Treasures", treasures, "treasure");
         }
 
-        function renderSection(tbody, title, items, categoryKey) {
-            // Category Header Row
-            const headerRow = document.createElement("tr");
-            headerRow.innerHTML = `<th colspan="7" class="category-row">${title}</th>`;
-            tbody.appendChild(headerRow);
+        function renderSingleTable(container, title, items, categoryKey) {
+            const card = document.createElement("div");
+            card.className = "table-card";
 
-            // Items Rows
+            // Category Banner with Editable Picture
+            const banner = document.createElement("div");
+            banner.className = "category-header-banner";
+            
+            const img = document.createElement("img");
+            img.className = "category-icon";
+            img.src = categoryIcons[categoryKey] || defaultIcons[categoryKey];
+            img.title = "Click to change picture";
+            img.onclick = () => triggerImageChange(categoryKey);
+
+            const titleSpan = document.createElement("span");
+            titleSpan.textContent = title;
+
+            banner.appendChild(img);
+            banner.appendChild(titleSpan);
+            card.appendChild(banner);
+
+            // Scrollable Table Matrix
+            const scrollDiv = document.createElement("div");
+            scrollDiv.className = "table-scroll";
+
+            const table = document.createElement("table");
+            
+            // Header Row (P1 - P6)
+            let thHTML = `<tr><th style="min-width: 130px;">Clues</th>`;
+            players.forEach(p => {
+                thHTML += `<th>${p}</th>`;
+            });
+            thHTML += `</tr>`;
+            
+            let tbodyHTML = `<tbody>`;
             items.forEach((item, itemIdx) => {
-                const row = document.createElement("tr");
-
-                // Item Name Cell
-                const nameCell = document.createElement("td");
-                nameCell.className = "item-cell";
-                nameCell.textContent = item;
-                row.appendChild(nameCell);
-
-                // 6 Player Columns
+                tbodyHTML += `<tr><td class="item-cell">${item}</td>`;
                 for (let p = 0; p < 6; p++) {
-                    const cell = document.createElement("td");
-                    cell.className = "mark-cell";
                     const key = `${categoryKey}-${itemIdx}-${p}`;
                     const stateIdx = gameMarks[key] || 0;
                     const state = states[stateIdx];
-
-                    cell.textContent = state.symbol;
-                    cell.className = `mark-cell ${state.class}`;
-
-                    cell.onclick = () => {
-                        let nextState = (stateIdx + 1) % states.length;
-                        gameMarks[key] = nextState;
-                        saveMarks();
-                        renderTable();
-                    };
-
-                    row.appendChild(cell);
+                    tbodyHTML += `<td class="mark-cell ${state.class}" onclick="toggleMark('${key}')">${state.symbol}</td>`;
                 }
+                tbodyHTML += `</tr>`;
+            });
+            tbodyHTML += `</tbody>`;
 
-                tbody.appendChild(row);
+            table.innerHTML = `<thead>${thHTML}</thead>${tbodyHTML}`;
+            scrollDiv.appendChild(table);
+            card.appendChild(scrollDiv);
+
+            container.appendChild(card);
+        }
+
+        function toggleMark(key) {
+            let currentState = gameMarks[key] || 0;
+            let nextState = (currentState + 1) % states.length;
+            gameMarks[key] = nextState;
+            saveData();
+            renderTables();
+        }
+
+        /* PLAYER MODAL FUNCTIONS */
+        function openPlayerModal() {
+            const inputsDiv = document.getElementById("modalInputs");
+            inputsDiv.innerHTML = "";
+            players.forEach((p, i) => {
+                inputsDiv.innerHTML += `
+                    <div class="player-input-group">
+                        <label>P${i+1}:</label>
+                        <input type="text" id="pInput${i}" value="${p}">
+                    </div>
+                `;
+            });
+            document.getElementById("playerModal").style.display = "flex";
+        }
+
+        function closePlayerModal() {
+            document.getElementById("playerModal").style.display = "none";
+        }
+
+        function savePlayerModal() {
+            for (let i = 0; i < 6; i++) {
+                const val = document.getElementById(`pInput${i}`).value.trim();
+                players[i] = val || `P${i+1}`;
+            }
+            saveData();
+            renderTables();
+            closePlayerModal();
+        }
+
+        /* IMAGE EDITING FUNCTIONS */
+        function triggerImageChange(categoryKey) {
+            activeCategoryForImage = categoryKey;
+            const choice = confirm("Click OK to upload an image from your device, or Cancel to enter an Image URL.");
+            if (choice) {
+                document.getElementById("imageUploader").click();
+            } else {
+                const url = prompt("Paste image URL:");
+                if (url) {
+                    categoryIcons[categoryKey] = url;
+                    saveData();
+                    renderTables();
+                }
+            }
+        }
+
+        function setupImageUploader() {
+            const uploader = document.getElementById("imageUploader");
+            uploader.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (file && activeCategoryForImage) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        categoryIcons[activeCategoryForImage] = evt.target.result;
+                        saveData();
+                        renderTables();
+                    };
+                    reader.readAsDataURL(file);
+                }
             });
         }
 
-        function savePlayers() {
-            const playerNames = [];
-            for (let i = 0; i < 6; i++) {
-                playerNames.push(document.getElementById(`p${i}`).value);
-            }
-            localStorage.setItem("op_cluedo_players", JSON.stringify(playerNames));
-        }
-
-        function saveMarks() {
-            localStorage.setItem("op_cluedo_marks", JSON.stringify(gameMarks));
+        /* STORAGE FUNCTIONS */
+        function saveData() {
+            localStorage.setItem("op_cluedo_players_v2", JSON.stringify(players));
+            localStorage.setItem("op_cluedo_marks_v2", JSON.stringify(gameMarks));
+            localStorage.setItem("op_cluedo_icons_v2", JSON.stringify(categoryIcons));
         }
 
         function loadSavedData() {
-            const savedPlayers = localStorage.getItem("op_cluedo_players");
+            const savedPlayers = localStorage.getItem("op_cluedo_players_v2");
             if (savedPlayers) {
-                try {
-                    const names = JSON.parse(savedPlayers);
-                    names.forEach((name, i) => {
-                        const input = document.getElementById(`p${i}`);
-                        if (input) input.value = name;
-                    });
-                } catch(e){}
+                try { players = JSON.parse(savedPlayers); } catch(e){}
             }
 
-            const savedMarks = localStorage.getItem("op_cluedo_marks");
+            const savedMarks = localStorage.getItem("op_cluedo_marks_v2");
             if (savedMarks) {
                 try { gameMarks = JSON.parse(savedMarks); } catch(e){}
+            }
+
+            const savedIcons = localStorage.getItem("op_cluedo_icons_v2");
+            if (savedIcons) {
+                try { categoryIcons = JSON.parse(savedIcons); } catch(e){}
             }
         }
 
         function clearMarks() {
             if (confirm("Clear all ticks, crosses, and question marks?")) {
                 gameMarks = {};
-                saveMarks();
-                renderTable();
+                saveData();
+                renderTables();
             }
         }
 
         function resetAll() {
-            if (confirm("Reset player names and all marks?")) {
-                localStorage.removeItem("op_cluedo_marks");
-                localStorage.removeItem("op_cluedo_players");
+            if (confirm("Reset everything back to default?")) {
+                localStorage.removeItem("op_cluedo_players_v2");
+                localStorage.removeItem("op_cluedo_marks_v2");
+                localStorage.removeItem("op_cluedo_icons_v2");
+                players = [...defaultPlayers];
                 gameMarks = {};
-                defaultPlayers.forEach((name, i) => {
-                    document.getElementById(`p${i}`).value = name;
-                });
-                renderTable();
+                categoryIcons = { ...defaultIcons };
+                renderTables();
             }
         }
 
-        init();
-    </script>
-</body>
-</html>
         init();
     </script>
 </body>
