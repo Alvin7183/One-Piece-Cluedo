@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>One Piece Cluedo Helper</title>
+    <!-- Pirate Style Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-color: #0d0d12;
-            --panel-bg: rgba(22, 22, 30, 0.95);
-            --header-bg: #1a1a26;
-            --accent: #e5b842;
-            --border: #333344;
-            --text: #e0e0e0;
+            --bg-color: #0b0b10;
+            --panel-bg: rgba(18, 18, 26, 0.55); /* Half transparent table background */
+            --header-bg: rgba(28, 28, 42, 0.7);
+            --accent: #f3c246;
+            --accent-glow: rgba(243, 194, 70, 0.3);
+            --border: rgba(255, 215, 0, 0.2);
+            --text: #f0f0f5;
         }
 
         * {
@@ -24,92 +30,129 @@
             background-color: var(--bg-color);
             color: var(--text);
             margin: 0;
-            padding: 4px;
+            padding: 6px 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
             
+            /* YOUR BACKGROUND IMAGE */
             background-image: 
-                radial-gradient(circle at center, rgba(30,30,45,0.6) 0%, rgba(10,10,15,0.95) 100%), 
+                radial-gradient(circle at center, rgba(10, 10, 18, 0.45) 0%, rgba(5, 5, 10, 0.8) 100%), 
                 url('one piece bg.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
+        /* BEAUTIFIED TOP HEADER */
         header {
             text-align: center;
-            margin-bottom: 6px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            position: relative;
         }
 
         h1 {
+            font-family: 'Pirata One', cursive, serif;
             color: var(--accent);
             margin: 0;
-            font-size: 1.15rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-size: 2rem;
+            letter-spacing: 2px;
+            text-shadow: 
+                0 0 10px var(--accent-glow),
+                2px 2px 0px #000,
+                -2px -2px 0px #000,
+                2px -2px 0px #000,
+                -2px 2px 0px #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
+        h1::before, h1::after {
+            content: "⚓";
+            font-size: 1.1rem;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+
+        /* BEAUTIFIED CONTROLS BUTTONS */
         .controls {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             width: 100%;
             max-width: 500px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .controls button {
             flex: 1;
-            background: var(--header-bg);
+            background: rgba(22, 22, 32, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 5px 2px;
-            border-radius: 4px;
+            border: 1px solid var(--border);
+            padding: 7px 4px;
+            border-radius: 20px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.72rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            font-size: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             white-space: nowrap;
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
         }
 
         .controls button:active {
+            transform: scale(0.96);
             background: var(--accent);
             color: #000;
+            box-shadow: 0 0 12px var(--accent);
         }
 
-        /* COMPACT TABLES */
+        /* HALF-TRANSPARENT GLASS TABLES */
         .table-card {
             width: 100%;
             max-width: 500px;
             background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            margin-bottom: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.6);
         }
 
         .category-header-banner {
-            background-color: #111118;
+            background: rgba(12, 12, 18, 0.75);
             color: #fff;
-            padding: 5px 8px;
-            font-size: 0.85rem;
+            padding: 6px 10px;
+            font-size: 0.9rem;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             border-bottom: 1px solid var(--border);
+        }
+
+        .category-header-banner span {
+            font-family: 'Pirata One', cursive, serif;
+            font-size: 1.15rem;
+            letter-spacing: 1px;
+            color: var(--accent);
         }
 
         .category-icon {
             width: 22px;
             height: 22px;
-            border-radius: 3px;
+            border-radius: 4px;
             object-fit: cover;
             border: 1px solid var(--accent);
-            background: #222;
+            background: #111;
         }
 
         table {
@@ -119,7 +162,7 @@
         }
 
         th, td {
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 4px 1px;
             text-align: center;
             font-size: 0.72rem;
@@ -132,17 +175,19 @@
             background-color: var(--header-bg);
             color: var(--accent);
             font-weight: bold;
-            font-size: 0.7rem;
-            padding: 4px 1px;
+            font-size: 0.72rem;
+            padding: 5px 1px;
         }
 
         .item-cell {
             text-align: left;
-            padding-left: 6px;
+            padding-left: 8px;
             font-weight: 500;
             width: 34%;
             font-size: 0.73rem;
-            background-color: rgba(25, 25, 35, 0.7);
+            background-color: rgba(15, 15, 22, 0.45);
+            color: #ffffff;
+            text-shadow: 1px 1px 2px #000;
         }
 
         .player-col {
@@ -151,20 +196,21 @@
 
         .mark-cell {
             cursor: pointer;
-            height: 30px;
+            height: 32px;
             font-size: 0.95rem;
             user-select: none;
-            transition: background 0.1s;
+            background-color: rgba(0, 0, 0, 0.2);
+            transition: background 0.15s;
         }
 
-        .mark-cell:hover {
-            background-color: rgba(255, 255, 255, 0.08);
+        .mark-cell:active {
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* SYMBOL COLORS */
-        .symbol-cross { color: #ff5252; font-weight: bold; }
-        .symbol-tick { color: #4eff7b; font-weight: bold; }
-        .symbol-question { color: #ffca28; font-weight: bold; }
+        /* SYMBOL COLORS WITH GLOW */
+        .symbol-cross { color: #ff5252; font-weight: bold; text-shadow: 0 0 6px rgba(255,82,82,0.6); }
+        .symbol-tick { color: #4eff7b; font-weight: bold; text-shadow: 0 0 6px rgba(78,255,123,0.6); }
+        .symbol-question { color: #ffca28; font-weight: bold; text-shadow: 0 0 6px rgba(255,202,40,0.6); }
 
         /* MODAL DIALOG FOR PLAYER NAMES */
         .modal-overlay {
@@ -172,6 +218,7 @@
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(6px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -179,20 +226,23 @@
         }
 
         .modal-card {
-            background: var(--panel-bg);
+            background: rgba(22, 22, 32, 0.95);
             border: 1px solid var(--accent);
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 10px;
+            padding: 16px;
             width: 100%;
             max-width: 320px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.9);
         }
 
         .modal-card h2 {
             margin-top: 0;
+            font-family: 'Pirata One', cursive, serif;
             color: var(--accent);
-            font-size: 1rem;
+            font-size: 1.3rem;
             margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 1px;
         }
 
         .player-input-group {
@@ -211,24 +261,24 @@
 
         .player-input-group input {
             flex: 1;
-            padding: 6px;
+            padding: 6px 8px;
             background: #111118;
             border: 1px solid var(--border);
             color: #fff;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
         }
 
         .modal-actions {
             display: flex;
             gap: 8px;
-            margin-top: 12px;
+            margin-top: 14px;
         }
 
         .modal-actions button {
             flex: 1;
             padding: 8px;
-            border-radius: 4px;
+            border-radius: 6px;
             border: none;
             font-weight: bold;
             cursor: pointer;
@@ -236,22 +286,22 @@
         }
 
         .btn-save { background: var(--accent); color: #000; }
-        .btn-cancel { background: #444; color: #fff; }
+        .btn-cancel { background: #333344; color: #fff; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🏴‍☠️ One Piece Cluedo</h1>
+        <h1>One Piece Cluedo</h1>
     </header>
 
     <div class="controls">
-        <button onclick="openPlayerModal()">⚙️ Players</button>
-        <button onclick="clearMarks()">Clear Sheet</button>
-        <button onclick="resetAll()">Reset All</button>
+        <button onclick="openPlayerModal()">⚙️ Set Players</button>
+        <button onclick="clearMarks()">🧹 Clear Sheet</button>
+        <button onclick="resetAll()">🔄 Reset All</button>
     </div>
 
-    <!-- 3 TABLES -->
+    <!-- 3 HALF-TRANSPARENT TABLES -->
     <div id="tablesContainer" style="width: 100%; max-width: 500px;"></div>
 
     <!-- PLAYER NAMES MODAL DIALOG -->
@@ -273,13 +323,11 @@
 
         const defaultPlayers = ["P1", "P2", "P3", "P4", "P5", "P6"];
 
-        // -------------------------------------------------------------
-        // EDIT YOUR IMAGE URLS HERE DIRECTLY:
-        // -------------------------------------------------------------
+        // Edit your custom picture icons here directly:
         const defaultIcons = {
-            char: "https://api.iconify.design/ion:person.svg?color=%23e5b842",
-            loc: "https://api.iconify.design/ion:location.svg?color=%23e5b842",
-            treasure: "https://api.iconify.design/ion:ribbon.svg?color=%23e5b842"
+            char: "https://api.iconify.design/ion:person.svg?color=%23f3c246",
+            loc: "https://api.iconify.design/ion:location.svg?color=%23f3c246",
+            treasure: "https://api.iconify.design/ion:ribbon.svg?color=%23f3c246"
         };
 
         const states = [
@@ -393,17 +441,17 @@
 
         /* STORAGE FUNCTIONS */
         function saveData() {
-            localStorage.setItem("op_cluedo_players_v4", JSON.stringify(players));
-            localStorage.setItem("op_cluedo_marks_v4", JSON.stringify(gameMarks));
+            localStorage.setItem("op_cluedo_players_v5", JSON.stringify(players));
+            localStorage.setItem("op_cluedo_marks_v5", JSON.stringify(gameMarks));
         }
 
         function loadSavedData() {
-            const savedPlayers = localStorage.getItem("op_cluedo_players_v4");
+            const savedPlayers = localStorage.getItem("op_cluedo_players_v5");
             if (savedPlayers) {
                 try { players = JSON.parse(savedPlayers); } catch(e){}
             }
 
-            const savedMarks = localStorage.getItem("op_cluedo_marks_v4");
+            const savedMarks = localStorage.getItem("op_cluedo_marks_v5");
             if (savedMarks) {
                 try { gameMarks = JSON.parse(savedMarks); } catch(e){}
             }
@@ -419,8 +467,8 @@
 
         function resetAll() {
             if (confirm("Reset player names and marks?")) {
-                localStorage.removeItem("op_cluedo_players_v4");
-                localStorage.removeItem("op_cluedo_marks_v4");
+                localStorage.removeItem("op_cluedo_players_v5");
+                localStorage.removeItem("op_cluedo_marks_v5");
                 players = [...defaultPlayers];
                 gameMarks = {};
                 renderTables();
