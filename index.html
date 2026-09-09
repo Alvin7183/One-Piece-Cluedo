@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>One Piece Mystery Sheet</title>
+    <title>One Piece Cluedo Helper</title>
+    <!-- QRCode JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --bg-overlay: rgba(15, 15, 22, 0.88);
-            --panel-bg: rgba(30, 30, 42, 0.95);
-            --accent: #d4af37;
-            --text: #f0f0f0;
-            --border: #444455;
+            --bg-color: #0d0d12;
+            --panel-bg: rgba(22, 22, 30, 0.95);
+            --header-bg: #1a1a26;
+            --accent: #e5b842;
+            --border: #333344;
+            --text: #e0e0e0;
         }
 
         * {
@@ -20,6 +23,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
             color: var(--text);
             margin: 0;
             padding: 10px;
@@ -29,169 +33,199 @@
             min-height: 100vh;
             
             background-image: 
-                linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
+                radial-gradient(circle at center, rgba(30,30,45,0.6) 0%, rgba(10,10,15,0.95) 100%), 
                 url('https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            background-repeat: no-repeat;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 12px;
         }
 
         h1 {
             color: var(--accent);
-            margin: 5px 0 10px 0;
-            text-align: center;
-            font-size: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+            margin: 0;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* STICKY PLAYER SELECTOR FOR MOBILE */
-        .sticky-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(20, 20, 28, 0.98);
-            width: 100%;
-            max-width: 600px;
-            padding: 10px 5px;
-            border-bottom: 2px solid var(--accent);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            margin-bottom: 15px;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .player-tabs {
-            display: flex;
-            overflow-x: auto;
-            gap: 6px;
-            padding-bottom: 4px;
-            scrollbar-width: none; /* Hide scrollbar Firefox */
-        }
-
-        .player-tabs::-webkit-scrollbar {
-            display: none; /* Hide scrollbar Chrome/Safari */
-        }
-
-        .tab-btn {
-            background: #282836;
-            color: #aaa;
-            border: 1px solid #444;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            white-space: nowrap;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .tab-btn.active {
-            background: var(--accent);
-            color: #111;
-            border-color: var(--accent);
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+        .subtitle {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 3px;
         }
 
         .controls {
-            margin-bottom: 15px;
             display: flex;
             gap: 10px;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
+            margin-bottom: 12px;
         }
 
         .controls button {
             flex: 1;
-            background-color: var(--panel-bg);
-            color: var(--text);
+            background: var(--header-bg);
+            color: var(--accent);
             border: 1px solid var(--accent);
-            padding: 10px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
             cursor: pointer;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .controls button:active {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* MATRIX TABLE STYLES (MATCHING CLUEDO GOT) */
+        .table-wrapper {
+            width: 100%;
+            max-width: 800px;
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 480px;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: var(--header-bg);
+            color: var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th.category-row {
+            background-color: #111118;
+            color: #fff;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .item-cell {
+            text-align: left;
+            padding-left: 10px;
+            font-weight: 500;
+            min-width: 130px;
+            background-color: rgba(25, 25, 35, 0.7);
+        }
+
+        .player-header input {
+            background: transparent;
+            border: none;
+            color: var(--accent);
             font-weight: bold;
             font-size: 0.85rem;
-        }
-
-        .sheet-container {
+            text-align: center;
             width: 100%;
-            max-width: 600px;
+            font-family: inherit;
         }
 
-        .category-card {
+        .mark-cell {
+            cursor: pointer;
+            width: 42px;
+            height: 40px;
+            font-size: 1.2rem;
+            user-select: none;
+            transition: background 0.15s;
+        }
+
+        .mark-cell:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* SYMBOL COLORS */
+        .symbol-cross { color: #ff5252; font-weight: bold; }
+        .symbol-tick { color: #4eff7b; font-weight: bold; }
+        .symbol-question { color: #ffca28; font-weight: bold; }
+
+        /* QR CODE PANEL */
+        .qr-card {
             background: var(--panel-bg);
-            border-radius: 8px;
             border: 1px solid var(--border);
-            margin-bottom: 15px;
-            overflow: hidden;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
 
-        .category-title {
-            background-color: rgba(20, 20, 28, 0.95);
+        .qr-card h3 {
+            margin: 0 0 10px 0;
             color: var(--accent);
-            font-size: 1.1rem;
-            padding: 10px 15px;
-            font-weight: bold;
-            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
         }
 
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--border);
+        #qrcode {
+            background: #fff;
+            padding: 8px;
+            border-radius: 6px;
         }
-
-        .item-row:last-child {
-            border-bottom: none;
-        }
-
-        .item-name {
-            font-size: 1rem;
-            font-weight: 500;
-            flex-grow: 1;
-        }
-
-        .mark-btn {
-            background: #22222e;
-            border: 1px solid #444;
-            border-radius: 8px;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .symbol-tick { color: #4eff7b; text-shadow: 0 0 5px rgba(78,255,123,0.4); }
-        .symbol-cross { color: #ff5252; text-shadow: 0 0 5px rgba(255,82,82,0.4); }
-        .symbol-question { color: #ffca28; text-shadow: 0 0 5px rgba(255,202,40,0.4); }
     </style>
 </head>
 <body>
 
-    <h1>🏴‍☠️ One Piece Companion</h1>
-
-    <!-- Sticky Header to Switch Active Player View -->
-    <div class="sticky-header">
-        <div style="font-size: 0.75rem; color: #888; margin-bottom: 5px; text-align: center;">SELECT PLAYER SHEET:</div>
-        <div class="player-tabs" id="playerTabs">
-            <!-- Tabs generated by JS -->
-        </div>
-    </div>
+    <header>
+        <h1>🏴‍☠️ One Piece Cluedo</h1>
+        <div class="subtitle">Interactive Detective Sheet</div>
+    </header>
 
     <div class="controls">
-        <button onclick="clearMarks()">Clear Current Sheet</button>
-        <button onclick="resetToDefault()">Reset Game</button>
+        <button onclick="clearMarks()">Clear Sheet</button>
+        <button onclick="resetAll()">Reset Names & Marks</button>
     </div>
 
-    <!-- Active Player Detective Sheet -->
-    <div class="sheet-container" id="sheetContainer">
-        <!-- Content dynamic rendering -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th style="min-width: 130px;">Clues</th>
+                    <th class="player-header"><input type="text" id="p0" value="Luffy" onchange="savePlayers()"></th>
+                    <th class="player-header"><input type="text" id="p1" value="Zoro" onchange="savePlayers()"></th>
+                    <th class="player-header"><input type="text" id="p2" value="Sanji" onchange="savePlayers()"></th>
+                    <th class="player-header"><input type="text" id="p3" value="Nami" onchange="savePlayers()"></th>
+                    <th class="player-header"><input type="text" id="p4" value="Usopp" onchange="savePlayers()"></th>
+                    <th class="player-header"><input type="text" id="p5" value="Robin" onchange="savePlayers()"></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="qr-card">
+        <h3>📱 Scan to Open Sheet on Your Phone</h3>
+        <div id="qrcode"></div>
     </div>
 
     <script>
@@ -199,114 +233,135 @@
         const places = ["Land of Wano", "Fish-Man Island", "Dressrosa", "Punk Hazard", "Drum Kingdom", "Marineford", "Whole Cake Island", "Amazon Lily", "Water Seven"];
         const treasures = ["Treasure Chest", "Binoculars", "Necklace", "Pirate Coins", "Meat", "Sword"];
 
-        const players = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Robin"];
+        const defaultPlayers = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Robin"];
 
         const states = [
             { symbol: "", class: "" },
-            { symbol: "✔", class: "symbol-tick" },
             { symbol: "❌", class: "symbol-cross" },
+            { symbol: "✔", class: "symbol-tick" },
             { symbol: "❓", class: "symbol-question" }
         ];
 
-        let selectedPlayerIndex = 0;
-        let gameMarks = {}; // format: "playerIdx-categoryKey-itemIdx": stateIdx
+        let gameMarks = {}; // Stores matrix keys "catKey-itemIdx-pIdx": stateIdx
 
         function init() {
             loadSavedData();
-            renderTabs();
-            renderSheet();
+            renderTable();
+            generateQRCode();
         }
 
-        function renderTabs() {
-            const tabsContainer = document.getElementById("playerTabs");
-            tabsContainer.innerHTML = "";
-
-            players.forEach((player, index) => {
-                const btn = document.createElement("button");
-                btn.className = `tab-btn ${index === selectedPlayerIndex ? 'active' : ''}`;
-                btn.textContent = player;
-                btn.onclick = () => {
-                    selectedPlayerIndex = index;
-                    renderTabs();
-                    renderSheet();
-                };
-                tabsContainer.appendChild(btn);
+        function generateQRCode() {
+            new QRCode(document.getElementById("qrcode"), {
+                text: window.location.href,
+                width: 120,
+                height: 120
             });
         }
 
-        function renderSheet() {
-            const container = document.getElementById("sheetContainer");
-            container.innerHTML = "";
+        function renderTable() {
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
 
-            renderCategory(container, "Characters", characters, "characters");
-            renderCategory(container, "Locations", places, "places");
-            renderCategory(container, "Treasures", treasures, "treasures");
+            renderSection(tbody, "Characters", characters, "char");
+            renderSection(tbody, "Locations", places, "loc");
+            renderSection(tbody, "Treasures", treasures, "treasure");
         }
 
-        function renderCategory(container, title, items, categoryKey) {
-            const card = document.createElement("div");
-            card.className = "category-card";
+        function renderSection(tbody, title, items, categoryKey) {
+            // Category Header Row
+            const headerRow = document.createElement("tr");
+            headerRow.innerHTML = `<th colspan="7" class="category-row">${title}</th>`;
+            tbody.appendChild(headerRow);
 
-            let html = `<div class="category-title">${title}</div>`;
-            
+            // Items Rows
             items.forEach((item, itemIdx) => {
-                const key = `${selectedPlayerIndex}-${categoryKey}-${itemIdx}`;
-                const currentStateIdx = gameMarks[key] || 0;
-                const state = states[currentStateIdx];
+                const row = document.createElement("tr");
 
-                html += `
-                    <div class="item-row">
-                        <span class="item-name">${item}</span>
-                        <div class="mark-btn ${state.class}" onclick="toggleMark('${key}')">
-                            ${state.symbol}
-                        </div>
-                    </div>
-                `;
+                // Item Name Cell
+                const nameCell = document.createElement("td");
+                nameCell.className = "item-cell";
+                nameCell.textContent = item;
+                row.appendChild(nameCell);
+
+                // 6 Player Columns
+                for (let p = 0; p < 6; p++) {
+                    const cell = document.createElement("td");
+                    cell.className = "mark-cell";
+                    const key = `${categoryKey}-${itemIdx}-${p}`;
+                    const stateIdx = gameMarks[key] || 0;
+                    const state = states[stateIdx];
+
+                    cell.textContent = state.symbol;
+                    cell.className = `mark-cell ${state.class}`;
+
+                    cell.onclick = () => {
+                        let nextState = (stateIdx + 1) % states.length;
+                        gameMarks[key] = nextState;
+                        saveMarks();
+                        renderTable();
+                    };
+
+                    row.appendChild(cell);
+                }
+
+                tbody.appendChild(row);
             });
-
-            card.innerHTML = html;
-            container.appendChild(card);
         }
 
-        function toggleMark(key) {
-            let currentState = gameMarks[key] || 0;
-            let nextState = (currentState + 1) % states.length;
-            gameMarks[key] = nextState;
-            saveData();
-            renderSheet();
-        }
-
-        function clearMarks() {
-            if (confirm(`Clear all marks for ${players[selectedPlayerIndex]}?`)) {
-                Object.keys(gameMarks).forEach(key => {
-                    if (key.startsWith(`${selectedPlayerIndex}-`)) {
-                        delete gameMarks[key];
-                    }
-                });
-                saveData();
-                renderSheet();
+        function savePlayers() {
+            const playerNames = [];
+            for (let i = 0; i < 6; i++) {
+                playerNames.push(document.getElementById(`p${i}`).value);
             }
+            localStorage.setItem("op_cluedo_players", JSON.stringify(playerNames));
         }
 
-        function resetToDefault() {
-            if (confirm("Reset marks for ALL players?")) {
-                localStorage.removeItem("op_companion_marks");
-                gameMarks = {};
-                renderSheet();
-            }
-        }
-
-        function saveData() {
-            localStorage.setItem("op_companion_marks", JSON.stringify(gameMarks));
+        function saveMarks() {
+            localStorage.setItem("op_cluedo_marks", JSON.stringify(gameMarks));
         }
 
         function loadSavedData() {
-            const saved = localStorage.getItem("op_companion_marks");
-            if (saved) {
-                try { gameMarks = JSON.parse(saved); } catch(e){}
+            const savedPlayers = localStorage.getItem("op_cluedo_players");
+            if (savedPlayers) {
+                try {
+                    const names = JSON.parse(savedPlayers);
+                    names.forEach((name, i) => {
+                        const input = document.getElementById(`p${i}`);
+                        if (input) input.value = name;
+                    });
+                } catch(e){}
+            }
+
+            const savedMarks = localStorage.getItem("op_cluedo_marks");
+            if (savedMarks) {
+                try { gameMarks = JSON.parse(savedMarks); } catch(e){}
             }
         }
 
+        function clearMarks() {
+            if (confirm("Clear all ticks, crosses, and question marks?")) {
+                gameMarks = {};
+                saveMarks();
+                renderTable();
+            }
+        }
+
+        function resetAll() {
+            if (confirm("Reset player names and all marks?")) {
+                localStorage.removeItem("op_cluedo_marks");
+                localStorage.removeItem("op_cluedo_players");
+                gameMarks = {};
+                defaultPlayers.forEach((name, i) => {
+                    document.getElementById(`p${i}`).value = name;
+                });
+                renderTable();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
         init();
     </script>
 </body>
